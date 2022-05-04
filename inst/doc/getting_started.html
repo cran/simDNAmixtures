@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Maarten Kruijver" />
+
+<meta name="date" content="2022-05-04" />
+
+<title>Getting started</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Getting started</h1>
+<h4 class="author">Maarten Kruijver</h4>
+<h4 class="date">2022-05-04</h4>
+
+
+
+<p>Simulation studies are often used in forensic genetics to study the behaviour of probabilistic genotyping software. In many cases, researchers use simplified models that ignore complexities such as peak height variability and stutters. The goal of this package is to make it straightforward to use probabilistic genotyping models in simulation studies.</p>
+<p>For a general introduction to forensic genetics and probabilistic genotyping, see <span class="citation">(Buckleton, Bright, and Taylor 2018)</span>. See also <span class="citation">(Gill et al. 2021)</span> for a recent review of probabilistic genotyping systems.</p>
+<div id="basic-log-normal-example" class="section level2">
+<h2>Basic log normal example</h2>
+<p>Below, we load allele frequencies provided with the package and demonstrate how mixtures can be sampled using a log normal model for peak heights (refer to <span class="citation">(Taylor, Bright, and Buckleton 2013)</span> for details on the model). The template parameters for each contributor are picked uniformly between 50 and 10,000. The degradation parameter is picked from a gamma distribution with shape 2.5 and scale 0.001.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>freqs <span class="ot">&lt;-</span> <span class="fu">read_allele_freqs</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>,<span class="st">&quot;FBI_extended_Cauc.csv&quot;</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">package =</span> <span class="st">&quot;simDNAmixtures&quot;</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(gf)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sampling_parameters <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">min_template =</span> <span class="fl">50.</span>, <span class="at">max_template =</span> <span class="fl">10000.</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">degradation_shape =</span> <span class="fl">2.5</span>, <span class="at">degradation_scale =</span> <span class="fl">1e-3</span>)</span></code></pre></div>
+<p>After the setup, a single function call is sufficient to generate a set of samples. We set <code>n=2</code> to generate two samples. The contributors to the sample are named <code>U1</code> and <code>U2</code> which means that each mixed sample has two unrelated contributors.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mixtures <span class="ot">&lt;-</span> <span class="fu">sample_mixtures</span>(<span class="at">n =</span> <span class="dv">2</span>, <span class="at">contributors =</span> <span class="fu">c</span>(<span class="st">&quot;U1&quot;</span>, <span class="st">&quot;U2&quot;</span>), <span class="at">freqs =</span> freqs,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sampling_parameters =</span> sampling_parameters,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">model_settings =</span> gf<span class="sc">$</span>log_normal_bwfw_settings,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sample_model =</span> sample_log_normal_model)</span></code></pre></div>
+<p>The <code>mixtures</code> object contains the simulation results. The <code>sample_mixtures</code> function has an optional <code>results_directory</code> argument. If the path to a directory is provided, then all simulation results will be persisted on disk in file formats that are readily imported in probabilistic genotyping software. We inspect the <code>parameter_summary</code> property of the result of <code>sample_mixtures</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(mixtures<span class="sc">$</span>parameter_summary[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SampleName</th>
+<th align="right">template1</th>
+<th align="right">template2</th>
+<th align="right">degradation1</th>
+<th align="right">degradation2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">sample_0001_N2_9584_4870_bc</td>
+<td align="right">9584.164</td>
+<td align="right">4869.979</td>
+<td align="right">0.0032058</td>
+<td align="right">0.004264</td>
+</tr>
+<tr class="even">
+<td align="left">sample_0002_N2_6366_5585_ba</td>
+<td align="right">6366.157</td>
+<td align="right">5584.630</td>
+<td align="right">0.0031578</td>
+<td align="right">0.001269</td>
+</tr>
+</tbody>
+</table>
+<p>The first sample is in approximately a 2:1 ratio. We print the first 10 peaks of the profile below.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(mixtures<span class="sc">$</span>samples[[<span class="dv">1</span>]]<span class="sc">$</span>mixture, <span class="dv">10</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Locus</th>
+<th align="left">Allele</th>
+<th align="right">Height</th>
+<th align="right">Size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">D3S1358</td>
+<td align="left">13</td>
+<td align="right">216</td>
+<td align="right">113.25</td>
+</tr>
+<tr class="even">
+<td align="left">D3S1358</td>
+<td align="left">14</td>
+<td align="right">4760</td>
+<td align="right">117.33</td>
+</tr>
+<tr class="odd">
+<td align="left">D3S1358</td>
+<td align="left">15</td>
+<td align="right">18947</td>
+<td align="right">121.40</td>
+</tr>
+<tr class="even">
+<td align="left">D3S1358</td>
+<td align="left">16</td>
+<td align="right">107</td>
+<td align="right">125.48</td>
+</tr>
+<tr class="odd">
+<td align="left">vWA</td>
+<td align="left">14</td>
+<td align="right">218</td>
+<td align="right">168.84</td>
+</tr>
+<tr class="even">
+<td align="left">vWA</td>
+<td align="left">15</td>
+<td align="right">4246</td>
+<td align="right">172.87</td>
+</tr>
+<tr class="odd">
+<td align="left">vWA</td>
+<td align="left">16</td>
+<td align="right">3629</td>
+<td align="right">176.91</td>
+</tr>
+<tr class="even">
+<td align="left">vWA</td>
+<td align="left">17</td>
+<td align="right">6545</td>
+<td align="right">180.95</td>
+</tr>
+<tr class="odd">
+<td align="left">vWA</td>
+<td align="left">18</td>
+<td align="right">6905</td>
+<td align="right">184.99</td>
+</tr>
+<tr class="even">
+<td align="left">vWA</td>
+<td align="left">19</td>
+<td align="right">97</td>
+<td align="right">189.02</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="basic-gamma-example" class="section level2">
+<h2>Basic gamma example</h2>
+<p>We repeat the example above with a gamma distribution for peak heights instead of a log normal one. The mean peak height parameter <code>mu</code> is chosen uniformly between 50 and 5,000. The variance parameter <code>cv</code> parameter (<span class="math inline">\(\sigma\)</span> in <span class="citation">(Bleka, Storvik, and Gill 2016)</span>) is chosen uniformly between 0.05 and 0.35. The degradation parameter is sampled from a Beta distribution with parameters 10 and 1, which means most profile will be only mildly degraded.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gamma_sampling_parameters <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">min_mu =</span> <span class="fl">50.</span>, <span class="at">max_mu =</span> <span class="fl">5e3</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">min_cv =</span> <span class="fl">0.05</span>, <span class="at">max_cv =</span> <span class="fl">0.35</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">degradation_shape1 =</span> <span class="dv">10</span>, <span class="at">degradation_shape2 =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>We now invoke the <code>sample_mixtures</code> function again to sample two mixtures; both consisting of two unrelated contributors. We do not sample stutters.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mixtures <span class="ot">&lt;-</span> <span class="fu">sample_mixtures</span>(<span class="at">n =</span> <span class="dv">2</span>, <span class="at">contributors =</span> <span class="fu">c</span>(<span class="st">&quot;U1&quot;</span>, <span class="st">&quot;U2&quot;</span>), <span class="at">freqs =</span> freqs,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sampling_parameters =</span> gamma_sampling_parameters,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">model_settings =</span> gf<span class="sc">$</span>gamma_settings_no_stutter,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sample_model =</span> sample_gamma_model)</span></code></pre></div>
+<p>We see that the first sample has <span class="math inline">\(\mu\)</span> around 1,236 and is in a 65:35 ratio.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(mixtures<span class="sc">$</span>parameter_summary[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]) </span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SampleName</th>
+<th align="right">mixture_proportions1</th>
+<th align="right">mixture_proportions2</th>
+<th align="right">mu</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">sample_0001_N2_1236_65_35_aa</td>
+<td align="right">0.6512712</td>
+<td align="right">0.3487288</td>
+<td align="right">1235.641</td>
+</tr>
+<tr class="even">
+<td align="left">sample_0002_N2_2906_82_18_aa</td>
+<td align="right">0.8158866</td>
+<td align="right">0.1841134</td>
+<td align="right">2905.758</td>
+</tr>
+</tbody>
+</table>
+<p>The coefficient of variation for a full heterozygote is about 9% for the first sample.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(mixtures<span class="sc">$</span>parameter_summary[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>)])</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SampleName</th>
+<th align="right">cv</th>
+<th align="right">degradation_beta1</th>
+<th align="right">degradation_beta2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">sample_0001_N2_1236_65_35_aa</td>
+<td align="right">0.0913336</td>
+<td align="right">0.8311816</td>
+<td align="right">0.8311816</td>
+</tr>
+<tr class="even">
+<td align="left">sample_0002_N2_2906_82_18_aa</td>
+<td align="right">0.3151883</td>
+<td align="right">0.8186755</td>
+<td align="right">0.8186755</td>
+</tr>
+</tbody>
+</table>
+<p>We print the first 10 peaks of the profile below.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(mixtures<span class="sc">$</span>samples[[<span class="dv">1</span>]]<span class="sc">$</span>mixture, <span class="dv">10</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Locus</th>
+<th align="left">Allele</th>
+<th align="right">Height</th>
+<th align="right">Size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">D3S1358</td>
+<td align="left">15</td>
+<td align="right">1394</td>
+<td align="right">121.40</td>
+</tr>
+<tr class="even">
+<td align="left">D3S1358</td>
+<td align="left">16</td>
+<td align="right">358</td>
+<td align="right">125.48</td>
+</tr>
+<tr class="odd">
+<td align="left">D3S1358</td>
+<td align="left">18</td>
+<td align="right">535</td>
+<td align="right">133.64</td>
+</tr>
+<tr class="even">
+<td align="left">vWA</td>
+<td align="left">14</td>
+<td align="right">928</td>
+<td align="right">168.84</td>
+</tr>
+<tr class="odd">
+<td align="left">vWA</td>
+<td align="left">16</td>
+<td align="right">1077</td>
+<td align="right">176.91</td>
+</tr>
+<tr class="even">
+<td align="left">vWA</td>
+<td align="left">17</td>
+<td align="right">334</td>
+<td align="right">180.95</td>
+</tr>
+<tr class="odd">
+<td align="left">D16S539</td>
+<td align="left">11</td>
+<td align="right">1607</td>
+<td align="right">251.67</td>
+</tr>
+<tr class="even">
+<td align="left">D16S539</td>
+<td align="left">12</td>
+<td align="right">341</td>
+<td align="right">255.70</td>
+</tr>
+<tr class="odd">
+<td align="left">CSF1PO</td>
+<td align="left">10</td>
+<td align="right">920</td>
+<td align="right">298.34</td>
+</tr>
+<tr class="even">
+<td align="left">CSF1PO</td>
+<td align="left">12</td>
+<td align="right">456</td>
+<td align="right">306.26</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bleka2016euroformix" class="csl-entry">
+Bleka, Øyvind, Geir Storvik, and Peter Gill. 2016. <span>“EuroForMix: An Open Source Software Based on a Continuous Model to Evaluate STR DNA Profiles from a Mixture of Contributors with Artefacts.”</span> <em>Forensic Science International: Genetics</em> 21: 35–44. <a href="https://doi.org/10.1016/j.fsigen.2015.11.008">https://doi.org/10.1016/j.fsigen.2015.11.008</a>.
+</div>
+<div id="ref-buckleton2018forensic" class="csl-entry">
+Buckleton, John S, Jo-Anne Bright, and Duncan Taylor. 2018. <em>Forensic DNA Evidence Interpretation</em>. CRC press.
+</div>
+<div id="ref-gill2021review" class="csl-entry">
+Gill, Peter, Corina Benschop, John Buckleton, Øyvind Bleka, and Duncan Taylor. 2021. <span>“A Review of Probabilistic Genotyping Systems: EuroForMix, DNAStatistX and STRmix™.”</span> <em>Genes</em> 12 (10): 1559. <a href="https://doi.org/10.3390/genes12101559">https://doi.org/10.3390/genes12101559</a>.
+</div>
+<div id="ref-taylor2013interpretation" class="csl-entry">
+Taylor, Duncan, Jo-Anne Bright, and John Buckleton. 2013. <span>“The Interpretation of Single Source and Mixed DNA Profiles.”</span> <em>Forensic Science International: Genetics</em> 7 (5): 516–28. <a href="https://doi.org/10.1016/j.fsigen.2013.05.011">https://doi.org/10.1016/j.fsigen.2013.05.011</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
