@@ -7,9 +7,11 @@
 sample_contributor_genotypes(
   contributors,
   freqs,
+  linkage_map,
   pedigree,
   loci = names(freqs),
-  return_non_contributors = FALSE
+  return_non_contributors = FALSE,
+  sex_locus_name = "AMEL"
 )
 }
 \arguments{
@@ -17,11 +19,15 @@ sample_contributor_genotypes(
 
 \item{freqs}{Allele frequencies (see \link{read_allele_freqs})}
 
-\item{pedigree}{(optionally) \link[pedtools:ped]{ped} object}
+\item{linkage_map}{(optional) A linkage map specifying the recombination fractions between loci. If missing, loci are assumed to be independent. See also \link{sample_many_pedigree_genotypes}.}
+
+\item{pedigree}{(optional) \link[pedtools:ped]{ped} object}
 
 \item{loci}{Character vector of locus names (defaults to \code{names} attribute of \code{freqs})}
 
 \item{return_non_contributors}{Logical. Should genotypes of non-contributing pedigree members also be returned?}
+
+\item{sex_locus_name}{Character vector, defaults to "AMEL"}
 }
 \value{
 List of DataFrames with genotypes for each pedigree member. See \link{sample_genotype} for the DataFrame format.
@@ -35,7 +41,7 @@ For each founder or unrelated person, a genotype is sampled randomly by drawing 
 \examples{
 
 # read allele frequencies
-freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
                            package = "simDNAmixtures"))
 
 # define a pedigree of siblings S1 and S2 (and their parents)
@@ -44,5 +50,12 @@ ped_sibs <- pedtools::nuclearPed(children = c("S1", "S2"))
 # sample genotypes for a mixture of S1 + U1 + S2
 # where U1 is an unrelated person
 
-sample_contributor_genotypes(contributors = c("S1","U1","S2"), freqs, ped_sibs)
+sample_contributor_genotypes(contributors = c("S1","U1","S2"),
+                             freqs, pedigree = ped_sibs,
+                             loci = gf_configuration()$autosomal_markers)
+
+# now also include AMEL
+sample_contributor_genotypes(contributors = c("S1","S2", "U1"),
+                             freqs, pedigree = ped_sibs,
+                             loci = c(gf_configuration()$autosomal_markers, "AMEL"))
 }

@@ -1,22 +1,13 @@
 # makes a reference database from collated knowns
+# see write_knowns_as_reference_db.R
 get_reference_database <- function(x){
 
   x_by_profile <- split(x, f =  paste0(x$CaseNumber,"!",x$`Sample Name`))
 
-  y <- x_by_profile[[1]]
+  case_number <- as.vector(sapply(x_by_profile, function(x) x$CaseNumber[1]))
+  sample_name <- as.vector(sapply(x_by_profile, function(x) x$`Sample Name`[1]))
 
-  db_rows <- lapply(x_by_profile, function (y){
-    data.frame(CaseNumber = y$CaseNumber[1], "Sample Name" = y$`Sample Name`[1] ,
-               data.frame(t(stats::setNames(as.vector(rbind(y$Allele1, y$Allele2)),
-                                     paste0(rep(y$Locus, each=2),c("","____2____")))
-                            # rep(y$Locus, each=2)
-               ),
-               check.names = FALSE, stringsAsFactors = FALSE),
-               stringsAsFactors = FALSE, check.names = FALSE)
-  })
-
-  db <- dplyr::bind_rows(db_rows)
-  names(db) <- gsub("____2____", replacement = "", names(db))
-
-  db
+  db <- .allele_tables_to_wide_references(x_by_profile)
+  data.frame(CaseNumber = case_number, "Sample Name" = sample_name,
+             db, check.names = FALSE)
 }

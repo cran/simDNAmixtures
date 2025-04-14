@@ -23,12 +23,15 @@ Sample genotypes for pedigree according to allele frequencies by allele dropping
 For each founder, a genotype is sampled randomly by drawing two alleles according to allele frequencies. Alleles for the rest of the pedigree are then obtained by allele dropping: \link{sample_offspring} is invoked for each non-founder.
 }
 \examples{
-freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
                            package = "simDNAmixtures"))
-data(gf)
+gf <- gf_configuration()
 
 ped_sibs <- pedtools::nuclearPed(children = c("S1", "S2"))
 
 sibs_genotypes <- sample_pedigree_genotypes(ped = ped_sibs,
 freqs = freqs, loci = gf$autosomal_markers)
+}
+\seealso{
+\link{sample_many_pedigree_genotypes} for a function that takes linkage into account.
 }

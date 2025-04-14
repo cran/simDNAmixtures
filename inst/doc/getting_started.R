@@ -6,9 +6,9 @@ knitr::opts_chunk$set(
 require(simDNAmixtures)
 
 ## -----------------------------------------------------------------------------
-freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
                                        package = "simDNAmixtures"))
-data(gf)
+gf <- gf_configuration()
 
 sampling_parameters <- list(min_template = 50., max_template = 10000.,
                             degradation_shape = 2.5, degradation_scale = 1e-3)
@@ -23,7 +23,7 @@ mixtures <- sample_mixtures(n = 2, contributors = c("U1", "U2"), freqs = freqs,
 ## -----------------------------------------------------------------------------
 knitr::kable(mixtures$parameter_summary[1:5])
 
-## ---- results='asis'----------------------------------------------------------
+## ----results='asis'-----------------------------------------------------------
 knitr::kable(head(mixtures$samples[[1]]$mixture, 10))
 
 ## -----------------------------------------------------------------------------
@@ -44,6 +44,6 @@ knitr::kable(mixtures$parameter_summary[1:4])
 ## -----------------------------------------------------------------------------
 knitr::kable(mixtures$parameter_summary[c(1,5:7)])
 
-## ---- results='asis'----------------------------------------------------------
+## ----results='asis'-----------------------------------------------------------
 knitr::kable(head(mixtures$samples[[1]]$mixture, 10))
 

@@ -16,10 +16,10 @@
 #' @seealso \link{log_normal_model}.
 #' @examples
 #' # read allele frequencies
-#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
 #'                                        package = "simDNAmixtures"))
 #'
-#' data(gf)
+#' gf <- gf_configuration()
 #'
 #' # define the gamma model for peak heights
 #' model <- gamma_model(mixture_proportions = 1, mu = 1000.,
@@ -48,24 +48,19 @@ gamma_model <- function(mixture_proportions, mu, cv,
                                         model_settings$locus_names),
                         model_settings){
 
-  if (!is.numeric(mixture_proportions)){
-    stop("mixture_proportions should be a numeric vector")
-  }
-  if (any(mixture_proportions <= 0)){
-    stop("mixture_proportions should be positive")
-  }
+  .validate_numeric(mixture_proportions,require_strictly_positive = TRUE,
+                    require_length_one = FALSE)
+
   if (!isTRUE(all.equal(sum(mixture_proportions), 1))){
     stop("mixture_proportions should sum to 1")
   }
 
-  if ((!is.numeric(degradation_beta)) || (length(degradation_beta) != length(mixture_proportions)) ){
-    stop("degradation_beta should be a numeric of length ", length(mixture_proportions))
+  if (length(degradation_beta) != length(mixture_proportions)){
+    stop("degradation_beta should be a numeric of length ",
+         length(mixture_proportions))
   }
-
-  if (any(degradation_beta <= 0)){
-    stop("degradation_beta should be positive")
-  }
-
+  .validate_numeric(degradation_beta, require_nonnegative = TRUE,
+                    require_length_one = FALSE)
   if (any(degradation_beta > 1)){
     stop("degradation_beta should not exceed 1")
   }
@@ -87,27 +82,13 @@ gamma_model <- function(mixture_proportions, mu, cv,
     stop("all locus names need to be in names(detection_threshold)")
   }
 
-  if (!is.numeric(LSAE)){
-    stop("LSAE needs to be numeric")
-  }
-
-  if (!is.numeric(detection_threshold)){
-    stop("detection_threhold needs to be numeric")
-  }
-
-  if ((!is.numeric(mu)) || (length(mu) != 1) ){
-    stop("mu should be a numeric of length 1")
-  }
-  if (mu <= 0){
-    stop("mu should be positive")
-  }
-
-  if ((!is.numeric(cv)) || (length(cv) != 1) ){
-    stop("cv should be a numeric of length 1")
-  }
-  if (cv < 0){
-    stop("cv should be non-negative")
-  }
+  .validate_numeric(LSAE, require_nonnegative = TRUE, require_length_one = FALSE)
+  .validate_numeric(detection_threshold, require_nonnegative = TRUE,
+                    require_length_one = FALSE)
+  .validate_numeric(mu, require_strictly_positive = TRUE,
+                    require_length_one = TRUE)
+  .validate_numeric(cv, require_nonnegative = TRUE,
+                    require_length_one = TRUE)
 
   if (!is.null(stutter_model)){
     if (!inherits(stutter_model, "stutter_model")){
@@ -120,7 +101,8 @@ gamma_model <- function(mixture_proportions, mu, cv,
   model$locus_names <- locus_names
   model$detection_threshold <- detection_threshold
 
-  parameters <- list(mixture_proportions = mixture_proportions,
+  parameters <- list(model = "gamma_model",
+                     mixture_proportions = mixture_proportions,
                      mu = mu,
                      cv = cv,
                      degradation_beta = degradation_beta,
@@ -183,20 +165,26 @@ gamma_model_build_expected_profile <- function(model, genotypes){
 
     g <- genotypes[[i_contributor]]
 
-    for (i_row in seq_len(nrow(g))){
+    # extract allele columns
+    allele_columns <- .get_allele_columns(g)
+
+    for (i_row in seq_len(nrow(allele_columns))){
 
       locus <- g$Locus[i_row]
-      ab <- c(g$Allele1[i_row], g$Allele2[i_row])
 
       lsae <- as.numeric(parameters$LSAE[locus])
 
-      for (a in ab){
-        size <- size_regression(locus, a)
+      for (i_allele in seq_len(ncol(allele_columns))){
+        a <- allele_columns[i_row, i_allele]
 
-        deg <- beta[i_contributor] ^ ((size - 125.) / 100.)
+        if (!is.na(a)){
+          size <- size_regression(locus, a)
 
-        amount <- lsae * deg * mu_contributor
-        x <- add_expected_allelic_peak_height(x, locus, a, size, amount)
+          deg <- beta[i_contributor] ^ ((size - 125.) / 100.)
+
+          amount <- lsae * deg * mu_contributor
+          x <- add_expected_allelic_peak_height(x, locus, a, size, amount)
+        }
       }
 
     }

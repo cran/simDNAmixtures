@@ -7,7 +7,7 @@
 #' @return DataFrame (see \link{sample_genotype})
 #' @examples
 #' # below we read an allele freqs and sample a genotype
-#' filename <- system.file("extdata","FBI_extended_Cauc.csv",
+#' filename <- system.file("extdata","FBI_extended_Cauc_022024.csv",
 #'                         package = "simDNAmixtures")
 #' freqs <- read_allele_freqs(filename)
 #'
@@ -20,12 +20,7 @@
 #' @export
 sample_offspring <- function(father, mother, label = "Child"){
 
-  if (!is.character(label)){
-    stop("label should be a character vector")
-  }
-  if (length(label)!=1){
-    stop("label should be a character vector of length 1")
-  }
+  .validate_character(label, required_length = 1L)
 
   check_genotype_df(father, "father")
   check_genotype_df(mother, "mother")
@@ -45,13 +40,14 @@ sample_offspring <- function(father, mother, label = "Child"){
     a_i <- a[[i_locus]]
     b_i <- b[[i_locus]]
 
-    a_i_numeric <- as.numeric(a_i)
-    b_i_numeric <- as.numeric(b_i)
+    a_i_numeric <- suppressWarnings(as.numeric(a_i))
+    b_i_numeric <- suppressWarnings(as.numeric(b_i))
 
-    a_i_is_numeric <- as.character(a_i_numeric) == a_i
-    b_i_is_numeric <- as.character(b_i_numeric) == b_i
+    a_i_is_numeric <- isTRUE(as.character(a_i_numeric) == a_i)
+    b_i_is_numeric <- isTRUE(as.character(b_i_numeric) == b_i)
 
-    if (a_i_is_numeric && b_i_is_numeric && (a_i_numeric > b_i_numeric)){
+    if ((a_i_is_numeric && b_i_is_numeric && (a_i_numeric > b_i_numeric)) ||
+       ( (!a_i_is_numeric)&&(!b_i_is_numeric)&&(a_i>b_i))){
       a[i_locus] <- b_i
       b[i_locus] <- a_i
     }

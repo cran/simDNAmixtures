@@ -17,9 +17,9 @@ Converts SMASH (SampleName, Marker, Allele, Size, Height) data to a wide table
 }
 \examples{
 # generate example data in SMASH form
-freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
 package = "simDNAmixtures"))
-data(gf)
+gf <- gf_configuration()
 
 sampling_parameters <- list(min_mu = 50., max_mu = 5e3,
                             min_cv = 0.05, max_cv = 0.35,

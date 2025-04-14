@@ -21,8 +21,8 @@
 #' @references
 #' Bright, J.A. et al. (2016). Developmental validation of STRmix™, expert software for the interpretation of forensic DNA profiles. Forensic Science International: Genetics, 23, 226-239. \doi{10.1016/j.fsigen.2016.05.007}
 #' @examples
-#' data(gf)
-#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+#' gf <- gf_configuration()
+#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
 #'                            package = "simDNAmixtures"))
 #'
 #' k2 <- sample_log_normal_stutter_variance(gf$log_normal_settings$stutter_variability)
@@ -37,36 +37,21 @@ log_normal_model <- function(template, degradation = rep(0., length(template)),
                              c2, k2,
                              model_settings){
 
-  if (!is.numeric(template)){
-    stop("template should be a numeric vector")
-  }
-  if (any(template <= 0)){
-    stop("template should be positive")
-  }
+  .validate_numeric(template, require_strictly_positive = TRUE, require_length_one = FALSE)
+  .validate_numeric(degradation, require_nonnegative = TRUE, require_length_one = FALSE)
 
   if ((!is.numeric(degradation)) || (length(degradation) != length(template)) ){
     stop("degradation should be a numeric of length ", length(template))
   }
 
-  if (any(degradation < 0)){
-    stop("degradation should be non-negative")
-  }
-
-  if (!is.numeric(c2)){
-    stop("c2 should be numeric")
-  }
-  if (length(c2) != 1){
-    stop("c2 should have length 1")
-  }
-  if (c2 <= 0){
-    stop("c2 should be positive")
-  }
+  c2 <- .validate_numeric(c2, require_strictly_positive = TRUE)
 
   validate_log_normal_model_settings(model_settings, LSAE, k2)
 
   model <- list()
 
-  parameters <- list(template = template,
+  parameters <- list(model = "log_normal_model",
+                     template = template,
                      degradation = degradation,
                      c2 = c2)
 
@@ -121,17 +106,7 @@ log_normal_model_build_expected_profile <- function(model, genotypes){
   }
 
   # determine deg_starts_at as minimal size
-  genotypes_bound <- do.call(rbind, genotypes)
-  genotypes_bound$Size1 <- genotypes_bound$Size2 <-
-    numeric(nrow(genotypes_bound))
-
-  for (i_row in seq_len(nrow(genotypes_bound))){
-    genotypes_bound$Size1[i_row] <- size_regression(
-      genotypes_bound$Locus[i_row], genotypes_bound$Allele1[i_row])
-    genotypes_bound$Size2[i_row] <- size_regression(
-      genotypes_bound$Locus[i_row], genotypes_bound$Allele2[i_row])
-  }
-  min_size <- min(min(genotypes_bound$Size1), min(genotypes_bound$Size2))
+  min_size <- .get_deg_starts_at(genotypes, size_regression)
 
   degradation <- parameters$degradation
 
@@ -150,21 +125,27 @@ log_normal_model_build_expected_profile <- function(model, genotypes){
 
     g <- genotypes[[i_contributor]]
 
-    for (i_row in seq_len(nrow(g))){
+    # extract allele columns
+    allele_columns <- .get_allele_columns(g)
+
+    for (i_row in seq_len(nrow(allele_columns))){
 
       locus <- g$Locus[i_row]
-      ab <- c(g$Allele1[i_row], g$Allele2[i_row])
 
       lsae <- as.numeric(parameters$LSAE[locus])
 
-      for (a in ab){
-        size <- size_regression(locus, a)
+      for (i_allele in seq_len(ncol(allele_columns))){
+        a <- allele_columns[i_row, i_allele]
 
-        deg <- exp(-degradation[i_contributor] * (size - min_size))
+        if (!is.na(a)){
+          size <- size_regression(locus, a)
 
-        amount <- lsae * deg * template_contributor
+          deg <- exp(-degradation[i_contributor] * (size - min_size))
 
-        x <- add_expected_allelic_peak_height(x, locus, a, size, amount)
+          amount <- lsae * deg * template_contributor
+
+          x <- add_expected_allelic_peak_height(x, locus, a, size, amount)
+        }
       }
     }
   }

@@ -11,7 +11,7 @@
 #' @return Named list with frequencies by locus. The frequencies at a locus are returned as a named numeric vector with names corresponding to alleles.
 #' @examples
 #' # below we read an allele freqs file that comes with the package
-#' filename <- system.file("extdata","FBI_extended_Cauc.csv",package = "simDNAmixtures")
+#' filename <- system.file("extdata","FBI_extended_Cauc_022024.csv",package = "simDNAmixtures")
 #' freqs <- read_allele_freqs(filename)
 #' freqs # the output is a list with an attribute named \code{N} giving the sample size.
 #' @export
@@ -27,17 +27,19 @@ read_allele_freqs <- function(filename, remove_zeroes = TRUE, normalise = TRUE){
   alleles <- df_without_N[[1]]
 
   locus_idx <- seq(from=2,to=ncol(df_without_N),by=1)
-  N <- stats::setNames(numeric(length(locus_idx)),nm = names(df_without_N[-1]))
+  N <- numeric() #stats::setNames(numeric(length(locus_idx)),nm = names(df_without_N[-1]))
 
   for(i_locus in locus_idx){
     f0 <- df_without_N[[i_locus]]
     f0[is.na(f0)] <- 0.
     f <- f0
 
-    freqs[[names(df_without_N)[i_locus]]]  <- stats::setNames(f,nm =  alleles)
-    N[names(df_without_N)[i_locus]] <- df_with_N[[i_locus]][length(df_with_N[[i_locus]])]
+    # skip empty loci
+    if (sum(f > 0) > 0){
+      freqs[[names(df_without_N)[i_locus]]]  <- stats::setNames(f,nm =  alleles)
+      N[names(df_without_N)[i_locus]] <- df_with_N[[i_locus]][length(df_with_N[[i_locus]])]
+    }
   }
-  attr(freqs,"N") <- N
 
   if (remove_zeroes){
     freqs <- lapply(freqs, function(x) x[x>0])
@@ -46,6 +48,8 @@ read_allele_freqs <- function(filename, remove_zeroes = TRUE, normalise = TRUE){
   if (normalise){
     freqs <- lapply(freqs, function(x) x/sum(x))
   }
+
+  attr(freqs,"N") <- N
 
   freqs
 }

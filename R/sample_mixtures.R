@@ -3,14 +3,17 @@
 #' @param n Integer. Number of samples.
 #' @param contributors Character vector with unique names of contributors. Valid names are "U1", "U2", ... for unrelated contributors or the names of pedigree members for related contributors.
 #' @param freqs Allele frequencies (see \link{read_allele_freqs})
+#' @param linkage_map (optional) A linkage map specifying the recombination fractions between loci. If missing, loci are assumed to be independent. See also \link{sample_many_pedigree_genotypes}.
 #' @param sampling_parameters List. Passed to the sample_model function.
 #' @param model_settings List. Passed to the sample_model function.
 #' @param sample_model Function such as \link{sample_log_normal_model}.
 #' @param pedigree (optionally) [ped][pedtools::ped] object. Contributors can be named pedigree members.
 #' @param results_directory (optionally) Character with path to directory where results are written to disk.
 #' @param seed (optionally) Integer seed value that can be used to get reproducible runs. If results are written to disk, the 'Run details.txt' file will contain a seed that can be used for reproducing the result.
+#' @param number_of_replicates Integer. Number of replicate simulations for each sample.
 #' @param write_non_contributors Logical. If TRUE, sampled genotypes for non-contributing pedigree members will also be written to disk. Defaults to FALSE.
 #' @param tag Character. Used for sub directory name when results_directory is provided.
+#' @param silent Logical. If TRUE, then no message will be printed about where the output (if any) was written to disk.
 #' @return If \code{results_directory} is provided, this function has the side effect of writing results to disk.
 #'
 #' Return value is a list with simulation results:\itemize{
@@ -20,9 +23,9 @@
 #' \item \code{parameter_summary} DataFrame with parameters for each sample
 #' }
 #' @examples
-#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
 #'                            package = "simDNAmixtures"))
-#' data(gf)
+#' gf <- gf_configuration()
 #'
 #' sampling_parameters <- list(min_mu = 50., max_mu = 5e3,
 #'                            min_cv = 0.05, max_cv = 0.35,
@@ -33,113 +36,90 @@
 #'                             model_settings = gf$gamma_settings_no_stutter,
 #'                             sample_model = sample_gamma_model)
 #'
+#'# sample a mixture of two siblings taking into account
+# linkage between vWA and D12
+#'
+#' linkage_map <- data.frame(chromosome = c("12","12"),
+#'                           locus = c("vWA", "D12391"),
+#'                           position = c(16.56662766, 29.48590551))
+#'
+#' ped_sibs <- pedtools::nuclearPed(children = c("Sib1", "Sib2"))
+#'
+#' sibs_mix <- sample_mixtures(n = 1, contributors = c("Sib1", "Sib2"),
+#'                             freqs = freqs,
+#'                             linkage_map = linkage_map,
+#'                             pedigree = ped_sibs,
+#'                             sampling_parameters = sampling_parameters,
+#'                             model_settings = gf$gamma_settings_no_stutter,
+#'                             sample_model = sample_gamma_model)
+#'
+#' # an example using the semi-continuous drop model
+#'
+#' drop_model_sampling_parameters <- list(min_dropout_probability. = 0.,
+#'                                        max_dropout_probability. = 0.5)
+#'
+#' drop_model_settings <- list(locus_names = gf$autosomal_markers,
+#'                             size_regression = gf$size_regression)
+#'
+#' mixtures <- sample_mixtures(n = 2, contributors = c("U1", "U2"), freqs = freqs,
+#'                             sampling_parameters = drop_model_sampling_parameters,
+#'                             model_settings = drop_model_settings,
+#'                             sample_model = sample_drop_model)
 #' @export
 sample_mixtures <- function(n, contributors, freqs,
+                            linkage_map,
                             sampling_parameters, model_settings,
                             sample_model, pedigree,
                             results_directory,
                             seed,
+                            number_of_replicates = 1L,
                             write_non_contributors = FALSE,
-                            tag = "simulation"){
+                            tag = "simulation", silent = FALSE){
 
-  if (length(n) != 1){
-    stop("n needs to have length 1")
-  }
+  # validate inputs
+  .validate_integer(n, require_strictly_positive = TRUE)
+  .validate_logical(write_non_contributors)
+  .validate_integer(number_of_replicates, require_strictly_positive = TRUE)
 
-  if (!(is.numeric(n) | is.integer(n))){
-    stop("n needs to be integer valued")
-  }
-
-  if (as.character(n) != as.character(as.integer(n))){
-    stop("n needs to be integer valued")
-  }
-
-  if (!is.logical(write_non_contributors)){
-    stop("write_non_contributors needs to be a logical")
-  }
-
-  if (length(write_non_contributors) != 1){
-    stop("write_non_contributors needs to be a logical of length 1")
-  }
-
-  if (!missing(seed)){
-
-    if (length(seed) != 1){
-      stop("seed needs to have length 1")
-    }
-
-    if (!(is.numeric(seed) | is.integer(seed))){
-      stop("seed needs to be integer valued")
-    }
-
-    if (as.character(seed) != as.character(as.integer(seed))){
-      stop("seed needs to be integer valued")
-    }
-
-    seed <- as.integer(seed)
-
-    set.seed(seed)
-  }
-  else{
-
-    # pick a seed up to 1 million
-    # and return this seed for reproducible results even if no seed provided
-    seed <- sample.int(n = 1e6, size = 1)
-
-    set.seed(seed)
-  }
+  # if seed is missing we obtain one here
+  seed_validated <- .validate_or_generate_seed(seed)
+  set.seed(seed_validated)
 
   number_of_contributors <- length(contributors)
 
+  # init results dir if used
   write_to_disk <- FALSE
   if (!missing(results_directory)){
-    if (!dir.exists(results_directory)){
-      dir.create(results_directory, recursive = TRUE)
-    }
-
     write_to_disk <- TRUE
 
-    sub_dir <- file.path(results_directory, paste0(
-      format(Sys.time(), "%Y-%m-%d %H_%M_%S"), " ", tag))
-
-    dir.create(sub_dir, recursive = TRUE)
-
-    run_details_file <- file.path(sub_dir, "Run Info.txt");
-    write(c(paste0("Simulation started at ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
-                 "Call: ",
-                 deparse(match.call()),"",
-                 paste0("Seed: ", seed)
-                 ),
-                 file = run_details_file)
-
-    if (!missing(pedigree)){
-      utils::write.csv(as.data.frame(pedigree),
-                       file = file.path(sub_dir,"Pedigree.csv"),
-                       quote = FALSE, row.names = FALSE)
-    }
-
-    mixtures_csv_dir <- file.path(sub_dir,"Mixtures csv")
-    dir.create(mixtures_csv_dir,recursive = TRUE)
-
-    mixtures_wide_dir <- file.path(sub_dir,"Mixtures table")
-    dir.create(mixtures_wide_dir,recursive = TRUE)
-
-    annotated_mixtures_dir <- file.path(sub_dir,"Mixtures annotated")
-    dir.create(annotated_mixtures_dir,recursive = TRUE)
-
-    knowns_dir <- file.path(sub_dir,"References by mixture")
-    dir.create(knowns_dir,recursive = TRUE)
+    results_dirs <- .init_results_directory(results_directory, tag,
+                                            seed_validated, pedigree, deparse(match.call()))
   }
 
-  samples <- list()
+  # pre allocate list for sampling results and sample names
+  samples <- vector(mode = "list", length = n * number_of_replicates)
+  sample_names <- character(n * number_of_replicates)
 
-  sample_names <- character(n)
-
+  # keep track of sample index even if replicates are used
+  i_sample_out <- 1L
   for (i_sample in seq_len(n)){
 
-    all_genotypes <- sample_contributor_genotypes(contributors, freqs, pedigree,
-                                                          loci = model_settings$locus_names,
-                                                          return_non_contributors = write_non_contributors)
+    if (!(is.null(model_settings$sex_loci)) && (length(model_settings$sex_loci) == 1)){
+      sex_locus_name <- model_settings$sex_loci
+
+      all_genotypes <- sample_contributor_genotypes(contributors, freqs,
+                                                    linkage_map = linkage_map,
+                                                    pedigree = pedigree,
+                                                    loci = model_settings$locus_names,
+                                                    return_non_contributors = write_non_contributors,
+                                                    sex_locus_name = sex_locus_name)
+    }else{
+      all_genotypes <- sample_contributor_genotypes(contributors, freqs,
+                                                    linkage_map = linkage_map,
+                                                    pedigree = pedigree,
+                                                    loci = model_settings$locus_names,
+                                                    return_non_contributors = write_non_contributors)
+    }
 
     contributor_genotypes <- all_genotypes[contributors]
 
@@ -147,86 +127,56 @@ sample_mixtures <- function(n, contributors, freqs,
                           sampling_parameters = sampling_parameters,
                           model_settings = model_settings)
 
-    sample_name <- paste0("sample", "_", sprintf("%04d", i_sample),
-                          "_", model$sample_name_suffix)
+    for (i_rep in seq_len(number_of_replicates)){
+      replicate_label <- if (number_of_replicates > 1) paste0("_rep", i_rep) else ""
 
-    sample_names[i_sample] <- sample_name
+      sample_name <- paste0("sample", "_", sprintf("%04d", i_sample),
+                            "_", model$sample_name_suffix, replicate_label)
 
-    annotated_mixture <- sample_mixture_from_genotypes(contributor_genotypes, model, sample_name)
+      sample_names[i_sample_out] <- sample_name
 
-    mixture <- get_bare_mixture(annotated_mixture)
+      annotated_mixture <- sample_mixture_from_genotypes(contributor_genotypes, model, sample_name)
 
-    samples[[i_sample]] <- list(sample_name = sample_name,
-                                contributor_genotypes = contributor_genotypes,
-                                model = model,
-                                annotated_mixture = annotated_mixture,
-                                mixture = mixture)
+      mixture <- get_bare_mixture(annotated_mixture)
 
-    if (write_to_disk){
-      ## annotated
-      annnotated_path <- file.path(annotated_mixtures_dir, paste0(sample_name," annotated.csv"))
-      utils::write.csv(x = annotated_mixture, file = annnotated_path,
-                quote = FALSE, row.names = FALSE, na = "")
+      samples[[i_sample_out]] <- list(sample_name = sample_name,
+                                  contributor_genotypes = contributor_genotypes,
+                                  model = model,
+                                  annotated_mixture = annotated_mixture,
+                                  mixture = mixture)
 
-      ## csv
-      mixture_csv_path<- file.path(mixtures_csv_dir, paste0(sample_name,".csv"))
-      utils::write.csv(x = mixture, file = mixture_csv_path,
-                quote = FALSE, row.names = FALSE, na = "")
+      if (write_to_disk){
+        .write_mixture(samples[[i_sample_out]], results_dirs)
 
-      smash_sample <- get_SMASH_from_samples(samples[i_sample])
-      table_sample <- SMASH_to_wide_table(smash_sample)
-
-      ## txt (wide table)
-      mixture_wide_path <- file.path(mixtures_wide_dir, paste0(sample_name,".txt"))
-      utils::write.table(x = table_sample,
-                  file = mixture_wide_path, quote = FALSE,
-                  sep = "\t", row.names = FALSE, na = "")
-
-      ## knowns (wide table)
-      if (write_non_contributors){
-        write_knowns(all_genotypes, knowns_dir, sample_name)
-      }
-      else{
-        write_knowns(contributor_genotypes, knowns_dir, sample_name)
+        ## knowns (wide table)
+        if (write_non_contributors){
+          write_knowns(all_genotypes, results_dirs$knowns_dir, sample_name)
+        }
+        else{
+          write_knowns(contributor_genotypes, results_dirs$knowns_dir, sample_name)
+        }
       }
 
-
+      i_sample_out <- i_sample_out + 1L
     }
   }
 
   names(samples) <- sample_names
 
   # prepare additional outputs
-  parameter_summary <- get_parameter_summary(samples)
-  smash <- get_SMASH_from_samples(samples)
-  table <- SMASH_to_wide_table(smash)
+  summaries <- .prepare_summaries(samples)
 
   if (write_to_disk){
-    parameter_summary_path <- file.path(sub_dir, "Parameter Summary.csv")
-    utils::write.csv(parameter_summary, file = parameter_summary_path,
-              quote = FALSE, na = "", row.names = FALSE)
-
-    smash_path <- file.path(sub_dir, paste0(tag, " SMASH.csv"))
-    utils::write.csv(smash, file = smash_path,
-              quote = FALSE, na = "", row.names = FALSE)
-
-    table_path <- file.path(sub_dir, paste0(tag, " table.txt"))
-    utils::write.table(x = table,
-                file = table_path, quote = FALSE,
-                sep = "\t", row.names = FALSE, na = "")
-
-    ## all knowns as single db (csv)
-    db_path <- file.path(sub_dir, "References DB.csv")
-    write_knowns_as_reference_db(samples, db_path)
+    .write_summaries(summaries, tag, results_dirs)
 
     write(c(paste0("Simulation finished at ", format(Sys.time(), "%Y-%m-%d %H:%M:%S"))),
-          file = run_details_file, append = TRUE)
+          file = results_dirs$run_details_file, append = TRUE)
 
-    cat("Finished sampling. Output written to", sub_dir, "\n")
+    if (!silent) cat("Finished sampling. Output written to", results_dirs$sub_dir, "\n")
   }
 
   list(call = match.call(),
        samples = samples,
-       smash = smash,
-       parameter_summary = parameter_summary)
+       smash = summaries$smash,
+       parameter_summary = summaries$parameter_summary)
 }

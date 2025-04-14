@@ -24,9 +24,9 @@ A mixture profile is sampled according to the provided \code{pg_model} (see \lin
 }
 \examples{
 # read allele frequencies and kit data
-freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
                            package = "simDNAmixtures"))
-data(gf)
+gf <- gf_configuration()
 
 # define a pedigree of siblings S1 and S2 (and their parents)
 ped_sibs <- pedtools::nuclearPed(children = c("S1", "S2"))
@@ -34,7 +34,7 @@ ped_sibs <- pedtools::nuclearPed(children = c("S1", "S2"))
 # sample genotypes for a mixture of S1 + U1 + S2
 # where U1 is an unrelated person
 genotypes <- sample_contributor_genotypes(contributors = c("S1","U1","S2"),
-freqs, ped_sibs, loci = gf$autosomal_markers)
+freqs, pedigree = ped_sibs, loci = gf$autosomal_markers)
 
 # define a gamma model for peak heights
 gamma_model <- gamma_model(mixture_proportions = c(0.5, 0.3, 0.2), mu = 1000.,

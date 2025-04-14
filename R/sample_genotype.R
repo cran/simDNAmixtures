@@ -7,24 +7,14 @@
 #' @return DataFrame with columns \code{Sample Name}, \code{Locus}, \code{Allele1} and \code{Allele2}.
 #' @examples
 #' # below we read an allele freqs and sample a genotype
-#' filename <- system.file("extdata","FBI_extended_Cauc.csv",
+#' filename <- system.file("extdata","FBI_extended_Cauc_022024.csv",
 #'                         package = "simDNAmixtures")
 #' freqs <- read_allele_freqs(filename)
 #' sample_genotype(freqs, loci = c("D3S1358", "vWA"))
 #' @export
 sample_genotype <- function(freqs, loci = names(freqs), label = "U"){
 
-  if (!is.list(freqs)){
-    stop("freqs should be a list")
-  }
-  if (!all(sapply(freqs, is.numeric))){
-    stop("freqs should be a list of numeric vectors")
-  }
-  for (locus in loci){
-    if (!(locus %in% names(freqs))){
-      stop(paste0("freqs not available for locus "), locus)
-    }
-  }
+  .validate_freqs(freqs, loci)
 
   number_of_loci <- length(loci)
 

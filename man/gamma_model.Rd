@@ -43,10 +43,10 @@ Define a gamma model for peak height variability with the parametrisation as des
 }
 \examples{
 # read allele frequencies
-freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
                                        package = "simDNAmixtures"))
 
-data(gf)
+gf <- gf_configuration()
 
 # define the gamma model for peak heights
 model <- gamma_model(mixture_proportions = 1, mu = 1000.,

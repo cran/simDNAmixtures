@@ -8,9 +8,9 @@
 #' @seealso \link{sample_mixtures} for a function that samples many mixtures in one go.
 #' @examples
 #' # read allele frequencies and kit data
-#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc.csv",
+#' freqs <- read_allele_freqs(system.file("extdata","FBI_extended_Cauc_022024.csv",
 #'                            package = "simDNAmixtures"))
-#' data(gf)
+#' gf <- gf_configuration()
 #'
 #' # define a pedigree of siblings S1 and S2 (and their parents)
 #' ped_sibs <- pedtools::nuclearPed(children = c("S1", "S2"))
@@ -18,7 +18,7 @@
 #' # sample genotypes for a mixture of S1 + U1 + S2
 #' # where U1 is an unrelated person
 #' genotypes <- sample_contributor_genotypes(contributors = c("S1","U1","S2"),
-#' freqs, ped_sibs, loci = gf$autosomal_markers)
+#' freqs, pedigree = ped_sibs, loci = gf$autosomal_markers)
 #'
 #' # define a gamma model for peak heights
 #' gamma_model <- gamma_model(mixture_proportions = c(0.5, 0.3, 0.2), mu = 1000.,
@@ -35,12 +35,8 @@ sample_mixture_from_genotypes <- function(genotypes, model, sample_name = "mixtu
   if (!all(sapply(genotypes, is.data.frame))){
     stop("genotypes is not a list of DataFrames")
   }
-  if (!is.character(sample_name)){
-    stop("sample_name is not a character")
-  }
-  if (length(sample_name) != 1){
-    stop("sample_name is not length 1")
-  }
+  .validate_character(sample_name, required_length = 1L)
+  .validate_character(model$locus_names, required_length_min = 1L)
 
   profile <- model$build_expected_profile_and_sample_peak_heights(genotypes)
 
